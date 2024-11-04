@@ -1,7 +1,6 @@
 -- ex 1. (See natural number game)
 
 -- ex 2.
-
 inductive MyList (α : Type u) where
   | nil  : MyList α
   | cons : α → MyList α → MyList α
@@ -96,13 +95,9 @@ inductive ArithExpr where
   deriving Repr
 
 
--- Not sure why this doesnt work
 def eval (ctx : List Nat) (expr : ArithExpr) : Nat :=
-  have evl := eval ctx
   match expr with
-  | .const n => n
-  | .var n => ctx.get! n
-  | .plus s t => (evl s) + (evl t)
-  | .times s t => (evl s) * (evl t)
-
-#check @ArithExpr.casesOn
+    | .const n => n
+    | .var n => ctx.get! n
+    | .plus s t => (eval ctx s) + (eval ctx t)
+    | .times s t => (eval ctx s) * (eval ctx t)
