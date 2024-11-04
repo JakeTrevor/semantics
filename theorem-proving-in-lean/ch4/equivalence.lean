@@ -80,13 +80,24 @@ example : (∀ x, r → p x) ↔ (r → ∀ x, p x) :=
 variable (men : Type) (barber : men)
 variable (shaves : men → men → Prop)
 
-example : (h : ∀ x : men, shaves barber x ↔ ¬ shaves x x) -> False := λ h =>
+example (h : ∀ x : men, shaves barber x ↔ ¬ shaves x x) : False :=
   (h barber).elim (λ s_ns ns_s =>
-    have s := shaves barber barber
-    have ns := s_ns _
-    absurd _ ns
+  have s : shaves barber barber := sorry
+  absurd s (s_ns s)
   )
 
+--- this is easy with classical reasoning:
+section req_classical
+open Classical
+
+example (h : ∀ x : men, shaves barber x ↔ ¬ shaves x x) : False :=
+  (h barber).elim (λ s_ns ns_s =>
+  (em (shaves barber barber)).elim
+    (λ s => absurd s (s_ns s))
+    (λ ns => absurd (ns_s ns) ns)
+  )
+
+end req_classical
 --- ex 4: various Nat props
 
 def even (n : Nat) : Prop := ∃ x : Nat, n = 2*x

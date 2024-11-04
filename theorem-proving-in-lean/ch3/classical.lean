@@ -24,17 +24,14 @@ example : ¬(p ∧ q) → ¬p ∨ ¬q :=
 
 
 example : ¬(p → q) → p ∧ ¬q :=
-  λ npq => (em p).elim
-    (λ p => (em q).elim
-      (λ q =>
-        have pq := λ _ => q
-        absurd pq npq
-      )
-      (λ nq => And.intro p nq)
+  λ npq => And.intro
+    ((em p).elim
+      id
+      (λ _np => byContradiction (λ np => npq.elim (λ p => absurd p np)))
     )
-    (λ np => (em q).elim
-      sorry
-      sorry
+    ((em q).elim
+      (λ q => npq.elim (λ _p => q))
+      id
     )
 
 example : (p → q) → (¬p ∨ q) :=

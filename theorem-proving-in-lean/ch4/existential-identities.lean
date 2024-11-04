@@ -67,9 +67,14 @@ example : (∃ x, p x) ↔ ¬ (∀ x, ¬ p x) :=
       have npa := ax_npx a
       absurd pa npa
     ))
-    (λ nax_npx => byContradiction (λ nex_px =>
-      nax_npx.elim (λ a npa => sorry)
-    ))
+   (λ ax_npx => (em (∃x, p x )).elim
+      id
+      (λ nex_px => ax_npx.elim
+        (λ a npa =>
+          have ex_px := Exists.intro a npa
+          absurd ex_px nex_px
+        ))
+    )
 
 example : (¬ ∃ x, p x) ↔ (∀ x, ¬ p x) :=
   Iff.intro
@@ -85,7 +90,11 @@ example : (¬ ∃ x, p x) ↔ (∀ x, ¬ p x) :=
 
 example : (¬ ∀ x, p x) ↔ (∃ x, ¬ p x) :=
   Iff.intro
-    (λ nax_px => nax_px.elim (λ a => sorry))
+    (λ nax_px => (em (∃ x, ¬ p x)).elim
+      id
+      (λ nex_npx => nex_npx.elim (sorry)
+      )
+    )
     (λ ex_npx ax_px => ex_npx.elim (λ a npa =>
       have pa := ax_px a
       absurd pa npa
